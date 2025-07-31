@@ -1,0 +1,28 @@
+{
+  "registeredUsers": [
+    {
+      "fullName": "Emma Williams",
+      "email": "emma.williams924@test.com",
+      "password": "Welcome924!",
+      "registeredAt": "2025-07-29T17:52:49.837Z"
+    },
+    {
+      "fullName": "William Williams",
+      "email": "william.williams2@test.com",
+      "password": "Welcome2!",
+      "registeredAt": "2025-07-29T17:52:49.885Z"
+    },
+    {
+      "fullName": "Mason Miller",
+      "email": "mason.miller38@test.com",
+      "password": "Welcome38!",
+      "registeredAt": "2025-07-29T17:52:49.903Z"
+    }
+  ],
+  "lastRegisteredUser": {
+    "fullName": "Mason Miller",
+    "email": "mason.miller38@test.com",
+    "password": "Welcome38!",
+    "registeredAt": "2025-07-29T17:52:49.903Z"
+  }
+}

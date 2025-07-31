@@ -1,0 +1,35 @@
+{
+  "name": "playwright-testing-framework",
+  "version": "1.0.0",
+  "description": "Professional Playwright testing framework with Page Object Model",
+  "author": "NhuDangCD",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NhuDangCD/playwright-testing-framework.git"
+  },
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:chrome": "playwright test --project=chromium",
+    "test:firefox": "playwright test --project=firefox",
+    "test:webkit": "playwright test --project=webkit",
+    "test:ui": "playwright test --ui",
+    "test:debug": "playwright test --debug",
+    "report": "playwright show-report",
+    "codegen": "playwright codegen"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.40.0",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  },
+  "keywords": [
+    "playwright",
+    "testing",
+    "automation",
+    "e2e",
+    "page-object-model",
+    "test-framework"
+  ]
+}
