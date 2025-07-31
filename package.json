@@ -6,7 +6,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/NhuDangCD/playwright-testing-framework.git"
+    "url": "git+https://github.com/NhuDangCD/playwright-testing.git"
   },
   "scripts": {
     "test": "playwright test",
