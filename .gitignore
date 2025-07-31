@@ -1,6 +1,12 @@
 # Dependencies
 node_modules/
 
+# Angular compiled output
+/dist
+/tmp
+/out-tsc
+/.angular
+
 # Test results
 test-results/
 playwright-report/
@@ -19,6 +25,12 @@ playwright/.cache/
 *.swp
 *.swo
 *~
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
 
 # OS
 .DS_Store
@@ -35,3 +47,11 @@ yarn-error.log*
 .cache
 coverage/
 *.orig
+/.sass-cache
+/connect.lock
+/libpeerconnection.log
+testem.log
+/typings
+
+# System Files
+chrome-profiler-events*.json

@@ -1,227 +1,225 @@
-# Playwright Testing Framework
+# Playwright Testing Complete Solution
 
-A professional, scalable Playwright testing framework implementing Page Object Model (POM) design pattern with advanced features for UI test automation.
+A complete, ready-to-run Playwright testing framework with an integrated Angular demo application. Clone, install, and run tests immediately - no additional setup required!
 
-## 🚀 Features
+## 🎯 Overview
 
-- **Page Object Model Architecture**: Clean separation of test logic and page interactions
-- **Reusable Components**: Modular page objects with inheritance
-- **Smart Test Data Management**: Automatic user data generation and persistence
-- **Cross-Browser Support**: Tests run on Chrome, Firefox, and Safari
-- **Parallel Execution**: Optimized for speed with parallel test runs
-- **Detailed Reporting**: HTML reports with screenshots and traces
-- **TypeScript Support**: Full type safety and IntelliSense
+This repository contains everything you need:
+- **Playwright Testing Framework** - Professional Page Object Model implementation
+- **Angular Demo Application** - Full application for testing (included)
+- **Pre-configured Tests** - Login, registration, forms, tooltips, and more
+- **One-Command Setup** - Just clone and run!
 
-## 📋 Prerequisites
+## 🚀 Quick Start
 
-- Node.js (v16 or higher)
-- npm or yarn
-- Application under test running (default: http://localhost:4200)
-
-## 🛠️ Installation
-
-1. Clone the repository:
 ```bash
-git clone https://github.com/NhuDangCD/playwright-testing-framework.git
-cd playwright-testing-framework
+# Clone the repository
+git clone https://github.com/NhuDangCD/playwright-testing.git
+cd playwright-testing
+
+# Install dependencies (includes Angular app + Playwright)
+npm install --force
+
+# Option 1: Run app and tests together
+npm run start:test
+
+# Option 2: Run separately
+# Terminal 1 - Start Angular app
+npm start
+
+# Terminal 2 - Run tests
+npm test
 ```
 
-2. Install dependencies:
-```bash
-npm install
-```
+That's it! No need to set up a separate application.
 
-3. Install Playwright browsers:
-```bash
-npx playwright install
-```
+## 📋 Features
+
+### Complete Testing Solution
+- ✅ Angular application included - no external dependencies
+- ✅ Page Object Model architecture
+- ✅ Random test data generation
+- ✅ User data persistence
+- ✅ Cross-browser testing (Chrome, Firefox, Safari)
+- ✅ Parallel execution
+- ✅ HTML reports with screenshots
+
+### Test Coverage
+- User Authentication (Login/Registration)
+- Form interactions and validation
+- Date picker functionality
+- Smart table operations
+- Tooltip interactions
+- Temperature slider controls
 
 ## 🏗️ Project Structure
 
 ```
-playwright-testing-framework/
-├── tests/                      # Test specifications
-│   ├── login.spec.ts          # Login functionality tests
-│   ├── registerPage.spec.ts   # Registration tests
-│   ├── tooltip.spec.ts        # Tooltip interaction tests
+playwright-testing/
+├── src/                       # Angular application source
+├── tests/                     # Playwright test files
+│   ├── login.spec.ts
+│   ├── registerPage.spec.ts
+│   ├── tooltip.spec.ts
 │   └── ...
-├── page-objects/              # Page Object Model classes
-│   ├── helperBase.ts         # Base class with common utilities
-│   ├── navigationPage.ts     # Navigation component
-│   ├── registerPage.ts       # Registration page object
+├── page-objects/             # Page Object Model classes
+│   ├── helperBase.ts
+│   ├── navigationPage.ts
 │   └── ...
-├── test-data/                 # Test data storage
-│   └── userData.json         # Persisted user credentials
-├── playwright.config.ts       # Playwright configuration
-└── CLAUDE.md                 # AI assistance documentation
+├── test-data/               # Test data persistence
+├── angular.json            # Angular configuration
+├── playwright.config.ts    # Playwright configuration
+└── package.json           # All dependencies
 ```
 
-## 🎯 Running Tests
+## 📝 Available Scripts
 
-### Run all tests
-```bash
-npm test
-```
+### Application & Testing
+- `npm start` - Start Angular app (http://localhost:4200)
+- `npm run start:test` - Start app and run tests automatically
+- `npm test` - Run all Playwright tests
+- `npm run test:headed` - Run tests with browser visible
+- `npm run test:chrome` - Run tests in Chrome only
+- `npm run test:ui` - Open Playwright UI mode
+- `npm run test:debug` - Debug tests
+- `npm run report` - View test report
+- `npm run codegen` - Generate tests with Playwright codegen
 
-### Run tests with UI (headed mode)
-```bash
-npm run test:headed
-```
-
-### Run tests in specific browser
-```bash
-npm run test:chrome
-npm run test:firefox
-npm run test:webkit
-```
-
-### Run specific test file
-```bash
-npx playwright test tests/login.spec.ts
-```
-
-### Debug tests
-```bash
-npm run test:debug
-```
-
-### View test report
-```bash
-npm run report
-```
-
-### Use Playwright UI mode
-```bash
-npm run test:ui
-```
-
-### Generate tests with Codegen
-```bash
-npm run codegen
-```
-
-## 📝 Test Data Management
-
-The framework automatically manages test data:
-
-### Random User Generation
-```typescript
-// Generates unique user data for each test
-{
-  "fullName": "Emma Williams",
-  "email": "emma.williams924@test.com",
-  "password": "Welcome924!"
-}
-```
-
-### Data Persistence
-- User data is saved to `test-data/userData.json`
-- Login tests can reuse previously registered users
-- View all registered users with the "Show all registered users" test
+### Angular Commands
+- `npm run build` - Build Angular application
+- `ng serve` - Start Angular dev server
 
 ## 🔧 Configuration
 
 ### Base URL
-Set in `playwright.config.ts`:
+The application runs on `http://localhost:4200` by default. To change:
+1. Update `playwright.config.ts` baseURL
+2. Update Angular port in `angular.json` if needed
+
+### Test Configuration
+Edit `playwright.config.ts`:
 ```typescript
-use: {
-  baseURL: 'http://localhost:4200',
-}
+export default defineConfig({
+  testDir: './tests',
+  use: {
+    baseURL: 'http://localhost:4200',
+    headless: false, // Show browser
+  },
+  projects: [
+    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
+    // Add more browsers as needed
+  ],
+});
 ```
 
-### Browsers
-Configure in `playwright.config.ts`:
-```typescript
-projects: [
-  { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
-  { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
-  { name: 'webkit', use: { ...devices['Desktop Safari'] } },
-]
-```
+## 💡 Writing New Tests
 
-## 📖 Writing Tests
-
-### Basic Test Structure
+1. Create test file in `tests/` directory:
 ```typescript
 import { test, expect } from '@playwright/test'
 import { YourPage } from '../page-objects/yourPage'
 
-test.describe('Feature Name', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.goto('/')
-    })
-
-    test('test description', async ({ page }) => {
-        const yourPage = new YourPage(page)
-        // Test implementation
-    })
+test('your test name', async ({ page }) => {
+    await page.goto('/')
+    const yourPage = new YourPage(page)
+    // Your test logic
 })
 ```
 
-### Page Object Pattern
+2. Create page object in `page-objects/`:
 ```typescript
-export class LoginPage extends HelperBase {
-    private readonly emailInput: Locator
-    private readonly passwordInput: Locator
+import { Page, Locator } from "@playwright/test"
+import { HelperBase } from "./helperBase"
+
+export class YourPage extends HelperBase {
+    private readonly yourElement: Locator
     
     constructor(page: Page) {
         super(page)
-        this.emailInput = page.getByRole('textbox', { name: 'Email' })
-        this.passwordInput = page.getByRole('textbox', { name: 'Password' })
-    }
-    
-    async login(email: string, password: string) {
-        await this.emailInput.fill(email)
-        await this.passwordInput.fill(password)
-        await this.page.getByRole('button', { name: 'Log In' }).click()
+        this.yourElement = page.locator('selector')
     }
 }
 ```
 
-## 🤝 Application Under Test
+## 🎨 Angular Application Features
 
-This framework is designed to test web applications. By default, it's configured to test an Angular demo app available at:
-- Repository: https://github.com/NhuDangCD/nhu-angular-demo-app
-- Local URL: http://localhost:4200
+The included Angular app provides:
+- **Dashboard**: Interactive widgets and charts
+- **Forms**: Various input types and layouts
+- **Tables**: Smart table with CRUD operations
+- **Modals**: Tooltips, toasts, dialogs
+- **Authentication**: Login/Register pages (no backend)
+- **Charts**: ECharts integration
 
-You can easily adapt it to test any web application by updating the base URL and page objects.
+## 🐛 Troubleshooting
 
-## 📊 Test Coverage
+### Installation Issues
+If you encounter dependency conflicts:
+```bash
+npm install --force
+```
 
-Current test coverage includes:
-- ✅ User Authentication (Login/Registration)
-- ✅ Form Interactions
-- ✅ Date Picker Functionality
-- ✅ Smart Table Operations
-- ✅ Tooltip Interactions
-- ✅ Temperature Slider Controls
+### Port Already in Use
+If port 4200 is busy:
+```bash
+# Kill process on port 4200 (Windows)
+netstat -ano | findstr :4200
+taskkill /PID <PID> /F
 
-## 🔍 Debugging
+# Or change port in angular.json
+```
 
-1. **VS Code Integration**: Install Playwright Test for VS Code extension
-2. **Debug Mode**: Use `npm run test:debug`
-3. **Trace Viewer**: Traces are captured on test failure
-4. **Screenshots**: Automatically captured on failure
-
-## 📈 Best Practices
-
-1. **Use Page Objects**: Keep selectors in page objects, not in tests
-2. **Avoid Hard Waits**: Use Playwright's built-in waiting mechanisms
-3. **Data Independence**: Generate unique test data for each run
-4. **Parallel Execution**: Write tests to run independently
-5. **Meaningful Names**: Use descriptive test and function names
+### Test Failures
+1. Ensure Angular app is running (`npm start`)
+2. Check browser logs in headed mode (`npm run test:headed`)
+3. View detailed report (`npm run report`)
 
 ## 🤝 Contributing
 
 1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+2. Create your feature branch
+3. Write tests for new features
+4. Ensure all tests pass
+5. Submit a pull request
+
+## 📊 Test Data Management
+
+The framework manages test data automatically:
+- Generates unique users for each test run
+- Saves to `test-data/userData.json`
+- Reuses data for login tests
+
+Example:
+```json
+{
+  "registeredUsers": [
+    {
+      "fullName": "Emma Williams",
+      "email": "emma.williams924@test.com",
+      "password": "Welcome924!",
+      "registeredAt": "2025-07-29T17:52:49.837Z"
+    }
+  ]
+}
+```
+
+## 🚦 CI/CD Ready
+
+Add to your CI pipeline:
+```yaml
+- name: Install dependencies
+  run: npm ci --force
+  
+- name: Install Playwright
+  run: npx playwright install
+  
+- name: Run tests
+  run: npm run start:test
+```
 
 ## 📄 License
 
-This project is licensed under the MIT License.
+MIT License
 
 ## 👤 Author
 
@@ -230,6 +228,6 @@ This project is licensed under the MIT License.
 
 ## 🙏 Acknowledgments
 
+- Angular app based on [ngx-admin](https://github.com/akveo/ngx-admin)
 - Built with [Playwright](https://playwright.dev/)
-- Inspired by best practices in test automation
-- Designed for scalability and maintainability
+- UI components by [Nebular](https://akveo.github.io/nebular/)
