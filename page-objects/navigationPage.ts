@@ -49,6 +49,11 @@ export class NavigationPage extends HelperBase {
         await this.tooltipMenuItem.click();
     }
 
+    async iotDashboardPage() {
+        // Already on dashboard page - just wait for it to be ready
+        await this.page.waitForLoadState('networkidle');
+    }
+
     async selectgroupMenuItem(groupItemTitle: string) {
         const menuItem = this.page.locator(`a[title="${groupItemTitle}"]`);
         const expandedState = await menuItem.getAttribute("aria-expanded");

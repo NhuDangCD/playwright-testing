@@ -1,4 +1,5 @@
 import { Locator, Page } from '@playwright/test';
+import { HelperBase } from './helperBase';
 
 interface RowData {
   id: string;
@@ -9,14 +10,28 @@ interface RowData {
   age: string;
 }
 
-export class SmartTablePage {
-  private readonly page: Page;
+export class SmartTablePage extends HelperBase {
+  protected readonly page: Page;
+  
+  // Private locators for smart table elements
+  private readonly table: Locator;
+  private readonly tableBody: Locator;
   private readonly tableRows: Locator;
+  private readonly tableHeader: Locator;
+  private readonly searchInput: Locator;
+  private readonly addNewButton: Locator;
 
   constructor(page: Page) {
+    super(page);
     this.page = page;
-    // Dùng XPath để lấy tất cả dòng
+    
+    // Initialize smart table locators using XPath
+    this.table = page.locator('//table');
+    this.tableBody = page.locator('//table//tbody');
     this.tableRows = page.locator('//table//tbody//tr');
+    this.tableHeader = page.locator('//table//thead//tr');
+    this.searchInput = page.locator('//input[@placeholder="Search"]');
+    this.addNewButton = page.locator('//button[contains(text(),"Add New")]');
   }
 
   public async getRowCount(): Promise<number> {
@@ -32,7 +47,7 @@ export class SmartTablePage {
       const rowCount = await this.getRowCount();
 
       if (rowCount === 0) {
-        console.warn('Bảng hiện tại không có dòng dữ liệu nào.');
+        console.warn('Table currently has no data rows.');
         return [];
       }
 
@@ -44,7 +59,7 @@ export class SmartTablePage {
       return rows;
 
     } catch (error) {
-      console.error('Không thể lấy dữ liệu bảng.', error);
+      console.error('Unable to retrieve table data.', error);
       return [];
     }
   }
@@ -74,7 +89,7 @@ export class SmartTablePage {
       return rowObjects;
 
     } catch (error) {
-      console.error('Không thể chuyển bảng thành object.', error);
+      console.error('Unable to convert table to objects.', error);
       return [];
     }
   }

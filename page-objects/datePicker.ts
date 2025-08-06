@@ -1,12 +1,22 @@
 import { Page, Locator } from '@playwright/test';
+import { HelperBase } from './helperBase';
 
-export class DatePicker {
-    private readonly page: Page;
+export class DatePicker extends HelperBase {
+    protected readonly page: Page;
+    
+    // Private locators for date picker
     private readonly calendarInputField: Locator;
+    private readonly calendarContainer: Locator;
+    private readonly dayCell: Locator;
 
     constructor(page: Page) {
+        super(page);
         this.page = page;
+        
+        // Initialize date picker locators
         this.calendarInputField = page.getByPlaceholder('Form Picker');
+        this.calendarContainer = page.locator('nb-calendar');
+        this.dayCell = page.locator('nb-calendar-day-cell');
     }
 
     async openCalendar() {
@@ -24,11 +34,9 @@ export class DatePicker {
             targetDay = day.toString();
         }
 
-        const dayLocator = this.page
-            .locator('nb-calendar-day-cell')
-            .getByText(targetDay, { exact: true });
-
+        const dayLocator = this.dayCell.getByText(targetDay, { exact: true });
         await dayLocator.click();
+        await this.waitForNumberOfSeconds(0.5);
     }
 
 }
