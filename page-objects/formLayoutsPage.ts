@@ -1,26 +1,67 @@
-import { Page } from '@playwright/test';
-export class formLayoutsPage {
+import { Locator, Page } from '@playwright/test';
 
-    readonly page: Page
-    public constructor(page: Page) {
-        this.page = page
+export class FormLayoutsPage {
+    private readonly page: Page;
+    // Private locators for Using the Grid form
+    private readonly usingGridContainer: Locator;
+    private readonly gridEmailField: Locator;
+    private readonly gridPasswordField: Locator;
+    private readonly gridOption1Radio: Locator;
+    private readonly gridOption2Radio: Locator;
+    private readonly gridSubmitButton: Locator;
 
+    // Private locators for Inline form
+    private readonly inlineFormContainer: Locator;
+    private readonly inlineNameField: Locator;
+    private readonly inlineEmailField: Locator;
+    private readonly inlineRememberCheckbox: Locator;
+    private readonly inlineSubmitButton: Locator;
+
+    private constructor(page: Page) {
+        this.page = page;
+        
+        // Initialize Using the Grid form locators
+        this.usingGridContainer = page.locator('nb-card', { hasText: "Using the Grid" });
+        this.gridEmailField = this.usingGridContainer.getByLabel('Email');
+        this.gridPasswordField = this.usingGridContainer.getByRole('textbox', { name: 'Password' });
+        this.gridOption1Radio = this.usingGridContainer.getByRole('radio', { name: 'Option 1' });
+        this.gridOption2Radio = this.usingGridContainer.getByRole('radio', { name: 'Option 2' });
+        this.gridSubmitButton = this.usingGridContainer.getByRole('button');
+
+        // Initialize Inline form locators
+        this.inlineFormContainer = page.locator('nb-card', { hasText: "Inline form" });
+        this.inlineNameField = this.inlineFormContainer.getByRole('textbox', { name: 'Jane Doe' });
+        this.inlineEmailField = this.inlineFormContainer.getByRole('textbox', { name: 'Email' });
+        this.inlineRememberCheckbox = this.inlineFormContainer.getByRole('checkbox');
+        this.inlineSubmitButton = this.inlineFormContainer.getByRole('button');
     }
+
+    static create(page: Page): FormLayoutsPage {
+        return new FormLayoutsPage(page);
+    }
+
     async submitFormWithCredentials(email: string, password: string, optionalText: string) {
-        const usingTheGridFrom = this.page.locator('nb-card', { hasText: "Using the Grid" })
-        await usingTheGridFrom.getByLabel('Email').fill(email)
-        //await page.getByLabel('Email').first().click();
-        await usingTheGridFrom.getByRole('textbox', { name: 'Password' }).fill(password)
-        await usingTheGridFrom.getByRole('radio', { name: optionalText }).check({ force: true })
-        await usingTheGridFrom.getByRole('button').click()
+        await this.gridEmailField.fill(email);
+        await this.gridPasswordField.fill(password);
+        
+        // Select the appropriate radio option
+        if (optionalText === 'Option 1') {
+            await this.gridOption1Radio.check({ force: true });
+        } else if (optionalText === 'Option 2') {
+            await this.gridOption2Radio.check({ force: true });
+        }
+        
+        await this.gridSubmitButton.click();
     }
     async submitInlineFormsWithEmailAndCheckbox(name: string, email: string, rememberMe: boolean) {
-        const usingTheInLineForm = this.page.locator('nb-card', { hasText: "Inline form" })
-        await usingTheInLineForm.getByRole('textbox', { name: 'Jane Doe' }).fill(name);
-        await usingTheInLineForm.getByRole('textbox', { name: 'Email' }).fill(email);
-        if (rememberMe)
-            await usingTheInLineForm.getByRole('checkbox').check({ force: true })
-        await usingTheInLineForm.getByRole('button').click()
+        await this.inlineNameField.fill(name);
+        await this.inlineEmailField.fill(email);
+        
+        if (rememberMe) {
+            await this.inlineRememberCheckbox.check({ force: true });
+        }
+        
+        await this.inlineSubmitButton.click();
     }
 
 }

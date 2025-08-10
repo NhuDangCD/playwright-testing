@@ -6,10 +6,10 @@ test.beforeEach(async ({ page }) => {
   await page.goto('/')
 })
 test('Print table rows as array of objects', async ({ page }) => {
-  const nav = new NavigationPage(page);
+  const nav = NavigationPage.create(page);
   await nav.smartTablePage();
 
-  const smartTable = new SmartTablePage(page);
+  const smartTable = SmartTablePage.create(page);
   const rows = await smartTable.getRowObjects();
 
   console.log('🧾 Table rows as objects:');

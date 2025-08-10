@@ -2,11 +2,22 @@ import { Page, Locator } from '@playwright/test';
 
 export class DatePicker {
     private readonly page: Page;
+    // Private locators for date picker
     private readonly calendarInputField: Locator;
+    private readonly calendarContainer: Locator;
+    private readonly dayCell: Locator;
 
-    constructor(page: Page) {
+    private constructor(page: Page) {
         this.page = page;
+        
+        // Initialize date picker locators
         this.calendarInputField = page.getByPlaceholder('Form Picker');
+        this.calendarContainer = page.locator('nb-calendar');
+        this.dayCell = page.locator('nb-calendar-day-cell');
+    }
+
+    static create(page: Page): DatePicker {
+        return new DatePicker(page);
     }
 
     async openCalendar() {
@@ -24,11 +35,9 @@ export class DatePicker {
             targetDay = day.toString();
         }
 
-        const dayLocator = this.page
-            .locator('nb-calendar-day-cell')
-            .getByText(targetDay, { exact: true });
-
+        const dayLocator = this.dayCell.getByText(targetDay, { exact: true });
         await dayLocator.click();
+        await this.page.waitForTimeout(0.5 * 1000);
     }
 
 }

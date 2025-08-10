@@ -2,11 +2,6 @@ import { test, expect } from '@playwright/test'
 import { NavigationPage } from '../page-objects/navigationPage'
 import { TooltipPage } from '../page-objects/tooltipPage'
 
-test.use({ 
-    browserName: 'chromium',
-    headless: false
-})
-
 test.beforeEach(async ({ page }) => {
     await page.goto('/')
     await page.waitForLoadState('domcontentloaded')
@@ -15,8 +10,8 @@ test.beforeEach(async ({ page }) => {
 test.describe('Tooltip Tests', () => {
     
     test('should display tooltip when hovering on element', async ({ page }) => {
-        const navigateTo = new NavigationPage(page)
-        const tooltipPage = new TooltipPage(page)
+        const navigateTo = NavigationPage.create(page)
+        const tooltipPage = TooltipPage.create(page)
         
         // Navigate to tooltip page under Modal & Overlays
         await navigateTo.tooltipPage()
@@ -42,8 +37,8 @@ test.describe('Tooltip Tests', () => {
     })
     
     test('should verify tooltip placements', async ({ page }) => {
-        const navigateTo = new NavigationPage(page)
-        const tooltipPage = new TooltipPage(page)
+        const navigateTo = NavigationPage.create(page)
+        const tooltipPage = TooltipPage.create(page)
         
         // Navigate to tooltip page under Modal & Overlays
         await navigateTo.tooltipPage()
@@ -105,8 +100,8 @@ test.describe('Tooltip Tests', () => {
     })
     
     test('should verify colored tooltip displays correctly', async ({ page }) => {
-        const navigateTo = new NavigationPage(page)
-        const tooltipPage = new TooltipPage(page)
+        const navigateTo = NavigationPage.create(page)
+        const tooltipPage = TooltipPage.create(page)
         
         // Navigate to tooltip page under Modal & Overlays
         await navigateTo.tooltipPage()

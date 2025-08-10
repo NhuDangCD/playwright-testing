@@ -1,8 +1,7 @@
 import { Locator, Page } from "@playwright/test";
-import { HelperBase } from "./helperBase";
 
-export class TooltipPage extends HelperBase {
-    protected readonly page: Page;
+export class TooltipPage {
+    private readonly page: Page;
 
     // Private locators for different tooltip elements
     private readonly defaultTooltipButton: Locator;
@@ -14,8 +13,7 @@ export class TooltipPage extends HelperBase {
     private readonly withIconTooltipButton: Locator;
     private readonly tooltipElement: Locator;
 
-    constructor(page: Page) {
-        super(page);
+    private constructor(page: Page) {
         this.page = page;
         
         // Initialize locators for tooltip buttons
@@ -31,44 +29,48 @@ export class TooltipPage extends HelperBase {
         this.tooltipElement = page.locator('nb-tooltip').or(page.locator('[role="tooltip"]')).or(page.locator('.nb-tooltip'));
     }
 
+    static create(page: Page): TooltipPage {
+        return new TooltipPage(page);
+    }
+
     async navigateToTooltipPage() {
         await this.page.goto('/');
-        await this.waitForNumberOfSeconds(2);
+        await this.page.waitForTimeout(2 * 1000);
     }
 
     async hoverOnDefaultTooltip() {
         await this.defaultTooltipButton.hover();
-        await this.waitForNumberOfSeconds(0.5);
+        await this.page.waitForTimeout(0.5 * 1000);
     }
 
     async hoverOnTopTooltip() {
         await this.topTooltipButton.hover();
-        await this.waitForNumberOfSeconds(0.5);
+        await this.page.waitForTimeout(0.5 * 1000);
     }
 
     async hoverOnRightTooltip() {
         await this.rightTooltipButton.hover();
-        await this.waitForNumberOfSeconds(0.5);
+        await this.page.waitForTimeout(0.5 * 1000);
     }
 
     async hoverOnBottomTooltip() {
         await this.bottomTooltipButton.hover();
-        await this.waitForNumberOfSeconds(0.5);
+        await this.page.waitForTimeout(0.5 * 1000);
     }
 
     async hoverOnLeftTooltip() {
         await this.leftTooltipButton.hover();
-        await this.waitForNumberOfSeconds(0.5);
+        await this.page.waitForTimeout(0.5 * 1000);
     }
 
     async hoverOnColoredTooltip() {
         await this.coloredTooltipButton.hover();
-        await this.waitForNumberOfSeconds(0.5);
+        await this.page.waitForTimeout(0.5 * 1000);
     }
 
     async hoverOnIconTooltip() {
         await this.withIconTooltipButton.hover();
-        await this.waitForNumberOfSeconds(0.5);
+        await this.page.waitForTimeout(0.5 * 1000);
     }
 
     async getTooltipText(): Promise<string> {
@@ -94,7 +96,7 @@ export class TooltipPage extends HelperBase {
     async moveMouseAway() {
         // Move mouse to a neutral position
         await this.page.mouse.move(0, 0);
-        await this.waitForNumberOfSeconds(0.5);
+        await this.page.waitForTimeout(0.5 * 1000);
     }
 
     async getTooltipBackgroundColor() {

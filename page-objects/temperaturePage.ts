@@ -1,8 +1,7 @@
 import { Locator, Page } from "@playwright/test";
-import { HelperBase } from "./helperBase";
 
-export class TemperaturePage extends HelperBase {
-    protected readonly page: Page;
+export class TemperaturePage {
+    private readonly page: Page;
 
     // Private locators
     private readonly temperatureCard: Locator;
@@ -12,8 +11,7 @@ export class TemperaturePage extends HelperBase {
     private readonly temperatureValue: Locator;
     private readonly svgContainer: Locator;
 
-    constructor(page: Page) {
-        super(page);
+    private constructor(page: Page) {
         this.page = page;
         
         // Initialize locators - be more specific
@@ -25,11 +23,15 @@ export class TemperaturePage extends HelperBase {
         this.svgContainer = page.locator('ngx-temperature-dragger svg').first();
     }
 
+    static create(page: Page): TemperaturePage {
+        return new TemperaturePage(page);
+    }
+
     async navigateToTemperaturePage() {
         // Navigate directly to the IoT dashboard page
         await this.page.goto('/pages/iot-dashboard');
         await this.page.waitForLoadState('networkidle');
-        await this.waitForNumberOfSeconds(2);
+        await this.page.waitForTimeout(2 * 1000);
     }
 
     async clickTemperatureTab() {
@@ -43,7 +45,7 @@ export class TemperaturePage extends HelperBase {
             const tempTab = this.page.getByText('Temperature').first();
             await tempTab.click();
         }
-        await this.waitForNumberOfSeconds(1);
+        await this.page.waitForTimeout(1 * 1000);
     }
 
     async setTemperatureUsingBoundingBox(targetTemperature: number) {
@@ -100,7 +102,7 @@ export class TemperaturePage extends HelperBase {
 
         // First hover over the slider to ensure it's interactive
         await this.temperatureDragger.hover();
-        await this.waitForNumberOfSeconds(0.3);
+        await this.page.waitForTimeout(0.3 * 1000);
         
         // Try mouse down and drag approach
         await this.page.mouse.move(centerX, centerY);
@@ -108,7 +110,7 @@ export class TemperaturePage extends HelperBase {
         await this.page.mouse.move(targetX, targetY, { steps: 5 });
         await this.page.mouse.up();
         
-        await this.waitForNumberOfSeconds(0.5);
+        await this.page.waitForTimeout(0.5 * 1000);
     }
 
     async getTemperatureValue(): Promise<string> {
@@ -125,7 +127,7 @@ export class TemperaturePage extends HelperBase {
 
     async hoverOnTemperatureSlider() {
         await this.temperatureSliderCircle.first().hover();
-        await this.waitForNumberOfSeconds(0.5);
+        await this.page.waitForTimeout(0.5 * 1000);
     }
 
     async isTemperatureSliderVisible(): Promise<boolean> {
