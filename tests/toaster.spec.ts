@@ -7,8 +7,8 @@ test.describe('Toaster Notification Tests', () => {
     let toasterPage: ToasterPage;
 
     test.beforeEach(async ({ page }) => {
-        navigationPage = new NavigationPage(page);
-        toasterPage = new ToasterPage(page);
+        navigationPage = NavigationPage.create(page);
+        toasterPage = ToasterPage.create(page);
         
         await page.goto('/');
         await navigationPage.toastrPage();
@@ -16,7 +16,7 @@ test.describe('Toaster Notification Tests', () => {
     });
 
     test.describe('Basic Toaster Functionality', () => {
-        test('should display a basic toast notification', async () => {
+        test('should display a basic toast notification', async ({ page }) => {
             await toasterPage.configureAndShowToast({
                 title: 'Test Toast',
                 content: 'This is a test message',
@@ -29,7 +29,7 @@ test.describe('Toaster Notification Tests', () => {
             expect(toastText.content).toBe('This is a test message');
         });
 
-        test('should show quick action toasts', async () => {
+        test('should show quick action toasts', async ({ page }) => {
             // Test Success Toast
             await toasterPage.showSuccessToast();
             expect(await toasterPage.isToastVisible()).toBeTruthy();
@@ -62,7 +62,7 @@ test.describe('Toaster Notification Tests', () => {
     });
 
     test.describe('Toast Types', () => {
-        test('should display different toast types with custom messages', async () => {
+        test('should display different toast types with custom messages', async ({ page }) => {
             const toastTypes: Array<'success' | 'info' | 'warning' | 'primary' | 'danger'> = 
                 ['success', 'info', 'warning', 'primary', 'danger'];
 
@@ -80,13 +80,13 @@ test.describe('Toaster Notification Tests', () => {
                 expect(toastText.title).toContain(type.charAt(0).toUpperCase() + type.slice(1));
                 
                 await toasterPage.clearAllToasts();
-                await toasterPage.waitForNumberOfSeconds(0.5);
+                await page.waitForTimeout(500);
             }
         });
     });
 
     test.describe('Toast Positions', () => {
-        test('should display toasts in different positions', async () => {
+        test('should display toasts in different positions', async ({ page }) => {
             const positions: Array<'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' | 'top-center' | 'bottom-center'> = 
                 ['top-right', 'top-left', 'bottom-right', 'bottom-left', 'top-center', 'bottom-center'];
 
@@ -103,13 +103,13 @@ test.describe('Toaster Notification Tests', () => {
                 expect(actualPosition).toBe(position);
                 
                 await toasterPage.clearAllToasts();
-                await toasterPage.waitForNumberOfSeconds(0.5);
+                await page.waitForTimeout(500);
             }
         });
     });
 
     test.describe('Toast Timeout', () => {
-        test('should auto-dismiss toast after specified timeout', async () => {
+        test('should auto-dismiss toast after specified timeout', async ({ page }) => {
             const timeout = 2000; // 2 seconds
             
             await toasterPage.configureAndShowToast({
@@ -126,7 +126,7 @@ test.describe('Toaster Notification Tests', () => {
             expect(disappeared).toBeTruthy();
         });
 
-        test('should keep toast visible with 0 timeout', async () => {
+        test('should keep toast visible with 0 timeout', async ({ page }) => {
             await toasterPage.configureAndShowToast({
                 title: 'Persistent Toast',
                 content: 'This will not auto-dismiss',
@@ -137,7 +137,7 @@ test.describe('Toaster Notification Tests', () => {
             expect(await toasterPage.isToastVisible()).toBeTruthy();
             
             // Wait 3 seconds and check if still visible
-            await toasterPage.waitForNumberOfSeconds(3);
+            await page.waitForTimeout(3000);
             expect(await toasterPage.isToastVisible()).toBeTruthy();
             
             // Clean up
@@ -146,7 +146,7 @@ test.describe('Toaster Notification Tests', () => {
     });
 
     test.describe('Toast Interactions', () => {
-        test('should dismiss toast on click when hideOnClick is enabled', async () => {
+        test('should dismiss toast on click when hideOnClick is enabled', async ({ page }) => {
             await toasterPage.configureAndShowToast({
                 title: 'Clickable Toast',
                 content: 'Click me to dismiss',
@@ -164,7 +164,7 @@ test.describe('Toaster Notification Tests', () => {
             expect(disappeared).toBeTruthy();
         });
 
-        test('should not dismiss toast on click when hideOnClick is disabled', async () => {
+        test('should not dismiss toast on click when hideOnClick is disabled', async ({ page }) => {
             await toasterPage.configureAndShowToast({
                 title: 'Non-clickable Toast',
                 content: 'Clicking me does nothing',
@@ -176,7 +176,7 @@ test.describe('Toaster Notification Tests', () => {
             expect(await toasterPage.isToastVisible()).toBeTruthy();
             
             await toasterPage.clickOnToast(0);
-            await toasterPage.waitForNumberOfSeconds(1);
+            await page.waitForTimeout(1000);
             
             // Toast should still be visible
             expect(await toasterPage.isToastVisible()).toBeTruthy();
@@ -187,16 +187,16 @@ test.describe('Toaster Notification Tests', () => {
     });
 
     test.describe('Multiple Toasts', () => {
-        test('should display multiple toasts simultaneously', async () => {
+        test('should display multiple toasts simultaneously', async ({ page }) => {
             // Show 3 different toasts
             await toasterPage.showSuccessToast();
-            await toasterPage.waitForNumberOfSeconds(0.5);
+            await page.waitForTimeout(500);
             
             await toasterPage.showInfoToast();
-            await toasterPage.waitForNumberOfSeconds(0.5);
+            await page.waitForTimeout(500);
             
             await toasterPage.showWarningToast();
-            await toasterPage.waitForNumberOfSeconds(0.5);
+            await page.waitForTimeout(500);
 
             // Verify all 3 toasts are visible
             const toastCount = await toasterPage.getToastCount();
@@ -208,7 +208,7 @@ test.describe('Toaster Notification Tests', () => {
             expect(await toasterPage.getToastType(2)).toBe('warning');
         });
 
-        test('should clear all toasts', async () => {
+        test('should clear all toasts', async ({ page }) => {
             // Show multiple toasts
             await toasterPage.showSuccessToast();
             await toasterPage.showInfoToast();
@@ -218,25 +218,25 @@ test.describe('Toaster Notification Tests', () => {
 
             // Clear all toasts
             await toasterPage.clearAllToasts();
-            await toasterPage.waitForNumberOfSeconds(1);
+            await page.waitForTimeout(1000);
 
             expect(await toasterPage.getToastCount()).toBe(0);
         });
 
-        test('should clear last toast', async () => {
+        test('should clear last toast', async ({ page }) => {
             // Show multiple toasts
             await toasterPage.showSuccessToast();
-            await toasterPage.waitForNumberOfSeconds(0.5);
+            await page.waitForTimeout(500);
             await toasterPage.showInfoToast();
-            await toasterPage.waitForNumberOfSeconds(0.5);
+            await page.waitForTimeout(500);
             await toasterPage.showWarningToast();
-            await toasterPage.waitForNumberOfSeconds(0.5);
+            await page.waitForTimeout(500);
 
             expect(await toasterPage.getToastCount()).toBe(3);
 
             // Clear last toast (warning)
             await toasterPage.clearLastToast();
-            await toasterPage.waitForNumberOfSeconds(1);
+            await page.waitForTimeout(1000);
 
             expect(await toasterPage.getToastCount()).toBe(2);
             // Verify remaining toasts
@@ -246,7 +246,7 @@ test.describe('Toaster Notification Tests', () => {
     });
 
     test.describe('Duplicate Prevention', () => {
-        test('should prevent duplicate toasts when enabled', async () => {
+        test('should prevent duplicate toasts when enabled', async ({ page }) => {
             await toasterPage.configureAndShowToast({
                 title: 'Unique Toast',
                 content: 'This message should not duplicate',
@@ -259,7 +259,7 @@ test.describe('Toaster Notification Tests', () => {
 
             // Try to show the same toast again
             await toasterPage.showToast();
-            await toasterPage.waitForNumberOfSeconds(0.5);
+            await page.waitForTimeout(500);
 
             // Should still have only one toast
             expect(await toasterPage.getToastCount()).toBe(1);
@@ -268,7 +268,7 @@ test.describe('Toaster Notification Tests', () => {
             await toasterPage.clearAllToasts();
         });
 
-        test('should allow duplicate toasts when disabled', async () => {
+        test('should allow duplicate toasts when disabled', async ({ page }) => {
             await toasterPage.configureAndShowToast({
                 title: 'Duplicate Toast',
                 content: 'This message can duplicate',
@@ -281,7 +281,7 @@ test.describe('Toaster Notification Tests', () => {
 
             // Show the same toast again
             await toasterPage.showToast();
-            await toasterPage.waitForNumberOfSeconds(0.5);
+            await page.waitForTimeout(500);
 
             // Should have two toasts
             expect(await toasterPage.getToastCount()).toBe(2);
@@ -292,7 +292,7 @@ test.describe('Toaster Notification Tests', () => {
     });
 
     test.describe('Edge Cases', () => {
-        test('should handle empty title and content', async () => {
+        test('should handle empty title and content', async ({ page }) => {
             await toasterPage.configureAndShowToast({
                 title: '',
                 content: '',
@@ -305,7 +305,7 @@ test.describe('Toaster Notification Tests', () => {
             expect(toastText.content).toBe('');
         });
 
-        test('should handle very long messages', async () => {
+        test('should handle very long messages', async ({ page }) => {
             const longTitle = 'This is a very long title that might overflow the toast notification container';
             const longContent = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.';
 
@@ -325,7 +325,7 @@ test.describe('Toaster Notification Tests', () => {
             await toasterPage.clearAllToasts();
         });
 
-        test('should handle special characters in messages', async () => {
+        test('should handle special characters in messages', async ({ page }) => {
             const specialTitle = 'Alert! <script>alert("XSS")</script>';
             const specialContent = 'Special chars: @#$%^&*()_+-={}[]|\\:";\'<>?,./';
 
@@ -342,9 +342,9 @@ test.describe('Toaster Notification Tests', () => {
         });
     });
 
-    test.afterEach(async () => {
+    test.afterEach(async ({ page }) => {
         // Clean up any remaining toasts
         await toasterPage.clearAllToasts();
-        await toasterPage.waitForNumberOfSeconds(0.5);
+        await page.waitForTimeout(500);
     });
 });

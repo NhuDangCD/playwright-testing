@@ -1,8 +1,7 @@
 import { Locator, Page } from "@playwright/test";
-import { HelperBase } from "./helperBase";
 
-export class ToasterPage extends HelperBase {
-    protected readonly page: Page;
+export class ToasterPage {
+    private readonly page: Page;
 
     // Private locators for toaster configuration
     private readonly positionSelect: Locator;
@@ -29,8 +28,7 @@ export class ToasterPage extends HelperBase {
     private readonly toasterContainer: Locator;
     private readonly toastElements: Locator;
 
-    constructor(page: Page) {
-        super(page);
+    private constructor(page: Page) {
         this.page = page;
         
         // Initialize configuration locators
@@ -57,6 +55,10 @@ export class ToasterPage extends HelperBase {
         // Initialize toaster elements
         this.toasterContainer = page.locator('nb-toastr-container').or(page.locator('.toastr-container'));
         this.toastElements = page.locator('nb-toast').or(page.locator('.toast'));
+    }
+
+    static create(page: Page): ToasterPage {
+        return new ToasterPage(page);
     }
 
     // Configuration methods
@@ -203,7 +205,7 @@ export class ToasterPage extends HelperBase {
     }
 
     async waitForToastsToLoad() {
-        await this.waitForNumberOfSeconds(1);
+        await this.page.waitForTimeout(1 * 1000);
     }
 
     async configureAndShowToast(config: {

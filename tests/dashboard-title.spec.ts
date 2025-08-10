@@ -5,7 +5,7 @@ test.describe('Dashboard Title Verification', () => {
     let navigationPage: NavigationPage;
 
     test.beforeEach(async ({ page }) => {
-        navigationPage = new NavigationPage(page);
+        navigationPage = NavigationPage.create(page);
         
         // Navigate to the application
         await page.goto('/');

@@ -12,14 +12,14 @@ test.beforeEach(async ({ page }) => {
     await page.goto('/');
 });
 test('navigate to form page', async ({ page }) => {
-    const navigationPage = new NavigationPage(page);
+    const navigationPage = NavigationPage.create(page);
     
     await navigationPage.formLayoutsPage();
     await navigationPage.datepickerPage();
 });
 test('filling forms', async ({ page }) => {
-    const navigationPage = new NavigationPage(page);
-    const formLayoutsPage = new FormLayoutsPage(page);
+    const navigationPage = NavigationPage.create(page);
+    const formLayoutsPage = FormLayoutsPage.create(page);
     
     await navigationPage.formLayoutsPage();
     await expect(page.locator('text=Form Layouts')).toBeVisible();
@@ -32,8 +32,8 @@ test('filling forms', async ({ page }) => {
     await formLayoutsPage.submitInlineFormsWithEmailAndCheckbox('John Doe', email, true);
 });
 test('filling DatePicker', async ({ page }) => {
-    const navigationPage = new NavigationPage(page);
-    const datePickerPage = new DatePicker(page);
+    const navigationPage = NavigationPage.create(page);
+    const datePickerPage = DatePicker.create(page);
     
     await navigationPage.datepickerPage();
     await datePickerPage.openCalendar();
@@ -41,7 +41,7 @@ test('filling DatePicker', async ({ page }) => {
 });
 
 test('register new user and save to file', async ({ page }) => {
-    const registerPage = new RegisterPage(page);
+    const registerPage = RegisterPage.create(page);
     
     await registerPage.navigateToRegisterPage();
     
@@ -58,13 +58,13 @@ test('register new user and save to file', async ({ page }) => {
 });
 
 test('login with last registered user', async ({ page }) => {
-    const registerPage = new RegisterPage(page);
+    const registerPage = RegisterPage.create(page);
     
     // Get the last registered user from file
     const lastUser = await registerPage.getLastRegisteredUser();
     
     if (lastUser && lastUser.status === 'registered') {
-        console.log('Using credentials for last registered user:', lastUser.email);
+        console.log('Using credentials for last registered user');
         // Here you would implement login functionality using the stored credentials
         // For now, just verify the data was saved correctly
         expect(lastUser.email).toBeTruthy();

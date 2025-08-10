@@ -33,17 +33,17 @@ npx playwright show-report           # View HTML test report
 ## Architecture
 
 ### Page Object Model Structure
-The project follows a Page Object Model pattern with inheritance:
+The project follows a Page Object Model pattern:
 
-- **HelperBase** (`page-objects/helperBase.ts`): Base class providing common utilities like `waitForNumberOfSeconds()`
 - **NavigationPage** (`page-objects/navigationPage.ts`): Handles menu navigation with XPath locators and private locator pattern
-- **Specific Page Objects**: Each page has its own class (formLayoutsPage, DatePicker, SmartTable)
+- **Specific Page Objects**: Each page has its own class (formLayoutsPage, DatePicker, SmartTable, ToasterPage, LoginPage, etc.)
 
 ### Key Patterns
 - **Private Locators**: Use private readonly locators initialized in constructor
 - **XPath Usage**: Navigation uses XPath selectors (e.g., `//a[normalize-space()="Form Layouts"]`)
-- **Inheritance**: All page objects extend HelperBase for shared functionality
+- **Factory Pattern**: Page objects use static `create()` methods for instantiation
 - **BeforeEach Setup**: Tests navigate to `http://localhost:4200/` before each test
+- **Waits**: Use native Playwright `page.waitForTimeout()` for delays when needed
 
 ### Test Organization
 - `tests/usePageObjects.spec.ts`: Main test file demonstrating form filling and date picker interactions

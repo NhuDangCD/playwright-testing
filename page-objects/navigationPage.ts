@@ -1,10 +1,7 @@
 import { Locator, Page } from "@playwright/test";
-import { HelperBase } from "./helperBase";
 
-export class NavigationPage extends HelperBase {
-    protected readonly page: Page;
-
-
+export class NavigationPage {
+    private readonly page: Page;
     // Private locators 
     private readonly fromLayoutsMenuItem: Locator;
     private readonly datePickerMenuItem: Locator;
@@ -12,8 +9,7 @@ export class NavigationPage extends HelperBase {
     private readonly toastrMenuItem: Locator;
     private readonly tooltipMenuItem: Locator;
 
-    constructor(page: Page) {
-        super(page);
+    private constructor(page: Page) {
         this.page = page;
         // Initialize locators here using Xpath
         this.fromLayoutsMenuItem = page.locator('//a[normalize-space()="Form Layouts"]');
@@ -23,10 +19,14 @@ export class NavigationPage extends HelperBase {
         this.tooltipMenuItem = page.locator('//a[normalize-space()="Tooltip"]');
     }
 
+    static create(page: Page): NavigationPage {
+        return new NavigationPage(page);
+    }
+
     async formLayoutsPage() {
         await this.selectgroupMenuItem("Forms");
         await this.fromLayoutsMenuItem.click();
-        await this.waitForNumberOfSeconds(2);
+        await this.page.waitForTimeout(2 * 1000);
     }
 
     async datepickerPage() {

@@ -1,9 +1,7 @@
 import { Locator, Page } from '@playwright/test';
-import { HelperBase } from './helperBase';
 
-export class FormLayoutsPage extends HelperBase {
-    protected readonly page: Page;
-
+export class FormLayoutsPage {
+    private readonly page: Page;
     // Private locators for Using the Grid form
     private readonly usingGridContainer: Locator;
     private readonly gridEmailField: Locator;
@@ -19,8 +17,7 @@ export class FormLayoutsPage extends HelperBase {
     private readonly inlineRememberCheckbox: Locator;
     private readonly inlineSubmitButton: Locator;
 
-    constructor(page: Page) {
-        super(page);
+    private constructor(page: Page) {
         this.page = page;
         
         // Initialize Using the Grid form locators
@@ -38,6 +35,11 @@ export class FormLayoutsPage extends HelperBase {
         this.inlineRememberCheckbox = this.inlineFormContainer.getByRole('checkbox');
         this.inlineSubmitButton = this.inlineFormContainer.getByRole('button');
     }
+
+    static create(page: Page): FormLayoutsPage {
+        return new FormLayoutsPage(page);
+    }
+
     async submitFormWithCredentials(email: string, password: string, optionalText: string) {
         await this.gridEmailField.fill(email);
         await this.gridPasswordField.fill(password);

@@ -1,0 +1,2 @@
+# This file ensures the test-data directory is tracked by git
+# while ignoring the actual test data files containing sensitive information

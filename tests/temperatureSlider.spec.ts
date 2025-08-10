@@ -14,7 +14,7 @@ test.beforeEach(async ({ page }) => {
 test.describe('Temperature Slider Tests', () => {
     
     test('should hover on temperature slider and set to 19 Celsius using bounding box', async ({ page }) => {
-        const temperaturePage = new TemperaturePage(page)
+        const temperaturePage = TemperaturePage.create(page)
         
         // Wait a bit for page to load completely
         await page.waitForTimeout(3000)
@@ -67,7 +67,7 @@ test.describe('Temperature Slider Tests', () => {
     })
 
     test('should verify circle element properties using bounding box', async ({ page }) => {
-        const temperaturePage = new TemperaturePage(page)
+        const temperaturePage = TemperaturePage.create(page)
         
         // Page is already on dashboard
         await temperaturePage.clickTemperatureTab()

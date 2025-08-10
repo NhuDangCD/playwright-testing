@@ -1,5 +1,4 @@
 import { Locator, Page } from '@playwright/test';
-import { HelperBase } from './helperBase';
 
 interface RowData {
   id: string;
@@ -10,8 +9,8 @@ interface RowData {
   age: string;
 }
 
-export class SmartTablePage extends HelperBase {
-  protected readonly page: Page;
+export class SmartTablePage {
+  private readonly page: Page;
   
   // Private locators for smart table elements
   private readonly table: Locator;
@@ -21,8 +20,7 @@ export class SmartTablePage extends HelperBase {
   private readonly searchInput: Locator;
   private readonly addNewButton: Locator;
 
-  constructor(page: Page) {
-    super(page);
+  private constructor(page: Page) {
     this.page = page;
     
     // Initialize smart table locators using XPath
@@ -34,11 +32,15 @@ export class SmartTablePage extends HelperBase {
     this.addNewButton = page.locator('//button[contains(text(),"Add New")]');
   }
 
-  public async getRowCount(): Promise<number> {
+  static create(page: Page): SmartTablePage {
+    return new SmartTablePage(page);
+  }
+
+  async getRowCount(): Promise<number> {
     return await this.tableRows.count();
   }
 
-  public async getRowTexts(): Promise<string[]> {
+  async getRowTexts(): Promise<string[]> {
     const rows: string[] = [];
 
     try {
@@ -64,7 +66,7 @@ export class SmartTablePage extends HelperBase {
     }
   }
 
-  public async getRowObjects(): Promise<RowData[]> {
+  async getRowObjects(): Promise<RowData[]> {
     const rowObjects: RowData[] = [];
 
     try {

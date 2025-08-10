@@ -1,7 +1,10 @@
 import { Locator, Page } from "@playwright/test";
-import { HelperBase } from "./helperBase";
 import * as fs from 'fs';
 import * as path from 'path';
+import * as dotenv from 'dotenv';
+
+// Load environment variables
+dotenv.config({ path: path.resolve(__dirname, '..', '.env') });
 
 interface UserData {
     fullName: string;
@@ -11,10 +14,8 @@ interface UserData {
     status: 'registered' | 'failed';
 }
 
-export class RegisterPage extends HelperBase {
-    protected readonly page: Page;
-
-    // Private locators for registration form
+export class RegisterPage {
+    private readonly page: Page;
     private readonly fullNameField: Locator;
     private readonly emailField: Locator;
     private readonly passwordField: Locator;
@@ -26,11 +27,10 @@ export class RegisterPage extends HelperBase {
     private readonly successMessage: Locator;
     private readonly errorMessage: Locator;
 
-    constructor(page: Page) {
-        super(page);
+    private constructor(page: Page) {
         this.page = page;
         
-        // Initialize locators following TooltipPage pattern
+        // Initialize locators
         this.fullNameField = page.getByLabel('Full Name').or(page.getByPlaceholder('Full Name'));
         this.emailField = page.getByLabel('Email').or(page.getByPlaceholder('Email'));
         this.passwordField = page.getByLabel('Password').or(page.getByPlaceholder('Password'));
@@ -43,9 +43,13 @@ export class RegisterPage extends HelperBase {
         this.errorMessage = page.locator('.alert-error, .error-message, [class*="error"]');
     }
 
+    static create(page: Page): RegisterPage {
+        return new RegisterPage(page);
+    }
+
     async navigateToRegisterPage() {
         await this.page.goto('/auth/register');
-        await this.waitForNumberOfSeconds(1);
+        await this.page.waitForTimeout(1 * 1000);
     }
 
     async fillRegistrationForm(fullName: string, email: string, password: string, confirmPassword?: string) {
@@ -60,7 +64,7 @@ export class RegisterPage extends HelperBase {
 
     async submitRegistration() {
         await this.registerButton.first().click();
-        await this.waitForNumberOfSeconds(2);
+        await this.page.waitForTimeout(2 * 1000);
     }
 
     async registerUser(fullName: string, email: string, password: string, confirmPassword?: string, acceptTerms: boolean = false): Promise<UserData> {
@@ -100,7 +104,7 @@ export class RegisterPage extends HelperBase {
     async acceptTermsAndConditions() {
         try {
             await this.termsCheckbox.first().click();
-            await this.waitForNumberOfSeconds(0.5);
+            await this.page.waitForTimeout(0.5 * 1000);
         } catch (error) {
             console.warn('Error clicking terms checkbox:', error);
         }
@@ -108,7 +112,7 @@ export class RegisterPage extends HelperBase {
 
     async clickLoginLink() {
         await this.loginLink.first().click();
-        await this.waitForNumberOfSeconds(1);
+        await this.page.waitForTimeout(1 * 1000);
     }
 
 
@@ -189,5 +193,77 @@ export class RegisterPage extends HelperBase {
             console.error('Failed to read user data:', error);
             return null;
         }
+    }
+
+    // Helper function to generate random user data
+    async generateRandomUserData() {
+        const randomNum = Math.floor(Math.random() * 999) + 1
+        
+        const firstNames = ['Emma', 'Liam', 'Olivia', 'Noah', 'Ava', 'Ethan', 'Sophia', 'Mason', 'Isabella', 'William']
+        const lastNames = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Rodriguez', 'Martinez']
+        
+        const randomFirstName = firstNames[Math.floor(Math.random() * firstNames.length)]
+        const randomLastName = lastNames[Math.floor(Math.random() * lastNames.length)]
+        
+        // Simple, memorable format: firstname.lastname123@test.com
+        const email = `${randomFirstName.toLowerCase()}.${randomLastName.toLowerCase()}${randomNum}@test.com`
+        
+        return {
+            fullName: `${randomFirstName} ${randomLastName}`,
+            email: email,
+            password: `Welcome${randomNum}!`
+        }
+    }
+
+    // Function to save user data to file (appends to existing users)
+    async saveUserDataToJson(userData: any) {
+        const filePath = path.join(__dirname, '..', 'test-data', 'userData.json')
+        const dir = path.dirname(filePath)
+        
+        // Create directory if it doesn't exist
+        if (!fs.existsSync(dir)) {
+            await fs.promises.mkdir(dir, { recursive: true })
+        }
+        
+        // Read existing data or create new structure
+        let data = {
+            registeredUsers: [],
+            lastRegisteredUser: null
+        }
+        
+        if (fs.existsSync(filePath)) {
+            const existingData = await fs.promises.readFile(filePath, 'utf-8')
+            data = JSON.parse(existingData)
+        }
+        
+        // Add timestamp to user data
+        const userWithTimestamp = {
+            ...userData,
+            registeredAt: new Date().toISOString()
+        }
+        
+        // Append new user to the list
+        data.registeredUsers.push(userWithTimestamp)
+        data.lastRegisteredUser = userWithTimestamp
+        
+        // Save updated data - passwords are saved for test purposes only
+        // In production, this should be encrypted or use env variables
+        await fs.promises.writeFile(filePath, JSON.stringify(data, null, 2))
+        console.log(`User data saved! Total users: ${data.registeredUsers.length}`)
+        
+        // Also save to .env file for secure storage (if enabled)
+        if (process.env.SAVE_TO_ENV === 'true') {
+            await this.appendToEnvFile(userData.email, userData.password)
+        }
+    }
+
+    private async appendToEnvFile(email: string, password: string) {
+        const envPath = path.join(__dirname, '..', '.env')
+        const envContent = `
+# Last registered user (auto-generated)
+TEST_USER_EMAIL=${email}
+TEST_USER_PASSWORD=${password}
+`
+        await fs.promises.appendFile(envPath, envContent)
     }
 }
